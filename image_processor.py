@@ -14,7 +14,7 @@ from skimage.color import label2rgb
 import matplotlib.patches as mpatches
 
 import cnn_predictor as cnn
-#import cnn_chars74k as cnn
+#import cnn_custom_predictor as cnn
 
 
 class ImageProcess():
