@@ -55,16 +55,25 @@ class ImageProcess():
                     continue
                 else:
                     if i == 0:
-                        samples = resize(roi, (28, 28), mode='constant')
+                        #resizing individual image into 14 x 20 pixel image
+                        #This is because usual font images have longer height than width
+                        samples = resize(roi, (20, 14), mode='constant')
+                        #padding extra pixel to zero in order to fit it in 28x28 convolution layer
+                        samples = np.pad(samples, ((4, 4), (7, 7)),  mode='constant')
+                        #samples = resize(samples, (28, 28), mode='constant')
                         coordinates.append(region.bbox)
                         i += 1
                     elif i == 1:
-                        roismall = resize(roi, (28, 28), mode='constant')
+                        roismall = resize(roi, (20, 14), mode='constant')
+                        roismall = np.pad(roismall, ((4, 4), (7, 7)), mode='constant')
+                        #roismall = resize(roismall, (28, 28), mode='constant')
                         samples = np.concatenate((samples[None, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
                         i += 1
                     else:
-                        roismall = resize(roi, (28, 28), mode='constant')
+                        roismall = resize(roi, (20, 14), mode='constant')
+                        roismall = np.pad(roismall, ((4, 4), (7, 7)), mode='constant')
+                        #roismall = resize(roismall, (28, 28), mode='constant')
                         samples = np.concatenate((samples[:, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
 
@@ -112,8 +121,8 @@ class ImageProcess():
             rect = mpatches.Rectangle((minc, minr), maxc - minc, maxr - minr,
                                       fill=False, edgecolor='red', linewidth=2)
             ax.add_patch(rect)
+        plt.show(block=False)
 
-        plt.show()
 
     def plot_to_check(self, what_to_plot, title):
         """
@@ -134,20 +143,24 @@ class ImageProcess():
                 ax = fig.add_subplot(10, 10, i + 1, xticks=[], yticks=[])
                 ax.imshow(what_to_plot['fullscale'][i], cmap="Greys_r")
                 if 'predicted_char' in what_to_plot:
-                    ax.text(-6, 8, "{}: {:.2}".format(str(what_to_plot['predicted_char'][i]),
-                            float(max(what_to_plot['predicted_prob'][i].tolist()))), fontsize=22, color='red')
+                    ax.text(-6, 8, "{}".format(str(what_to_plot['predicted_char'][i])), fontsize=22, color='red')
+                    #ax.text(-6, 8, "{}: {:.2}".format(str(what_to_plot['predicted_char'][i]),
+                            #float(max(what_to_plot['predicted_prob'][i].tolist()))), fontsize=22, color='red')
             plt.suptitle(title, fontsize=20)
-            plt.show()
+            plt.show(block=False)
+
         else:
             total = list(np.random.choice(n_images, 100))
             for i, j in enumerate(total):
                 ax = fig.add_subplot(10, 10, i + 1, xticks=[], yticks=[])
                 ax.imshow(what_to_plot['fullscale'][j], cmap="Greys_r")
                 if 'predicted_char' in what_to_plot:
-                    ax.text(-6, 8, "{}: {:.2}".format(str(what_to_plot['predicted_char'][i]),
-                            float(max(what_to_plot['predicted_prob'][i].tolist()))), fontsize=22, color='red')
+                    ax.text(-6, 8, "{}".format(str(what_to_plot['predicted_char'][i])), fontsize=22, color='red')
+                    #ax.text(-6, 8, "{}: {:.2}".format(str(what_to_plot['predicted_char'][i]),
+                            #float(max(what_to_plot['predicted_prob'][i].tolist()))), fontsize=22, color='red')
             plt.suptitle(title, fontsize=20)
-            plt.show()
+            plt.show(block=False)
+
 
     def predict_char(self):
         """
@@ -192,11 +205,14 @@ class ImageProcess():
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for char in to_realign:
-            if (char[2] <0.80):
+            if(char[2] <0.5):
                 pass
-                #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+            elif (char[2] <0.70):
+                if(char[1] == 1):
+                    ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif(char[2] <0.90):
-                ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
+                if(char[1] == 1 or char[1] == 6):
+                    ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
             elif (char[2] < 0.95):
                 ax.text(char[0][1], char[0][2], char[1], size=16, color='blue')
             else:
