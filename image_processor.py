@@ -15,6 +15,7 @@ import matplotlib.patches as mpatches
 
 import cnn_predictor as cnn
 #import cnn_custom_predictor as cnn
+#import cnn_predictor_modified as cnn
 
 
 class ImageProcess():
@@ -24,8 +25,6 @@ class ImageProcess():
         #tmp_img = cv2.GaussianBlur(tmp_img, (5, 5), 0)
         tmp_img = cv2.bitwise_not(tmp_img)
         self.image = np.asarray(tmp_img)
-        #self.image = imread(image_file, as_grey=True)
-        #self.image = 1-imread(image_file, as_grey=True)
         self.preprocess()
 
     def preprocess(self):
@@ -36,6 +35,10 @@ class ImageProcess():
         return self.cleared
 
     def get_candidates(self):
+        """
+        identifies objects in the image. Gets contours, draws rectangles around them
+        and saves the rectangles as individual images.
+        """
         label_image = measure.label(self.cleared)
         borders = np.logical_xor(self.bw, self.cleared)
         label_image[borders] = -1
@@ -53,20 +56,20 @@ class ImageProcess():
                 else:
                     if i == 0:
                         samples = resize(roi, (28, 28), mode='constant')
-                        #samples = resize(roi, (22, 30), mode='constant')
                         coordinates.append(region.bbox)
                         i += 1
                     elif i == 1:
                         roismall = resize(roi, (28, 28), mode='constant')
-                        #roismall = resize(roi, (22, 30), mode='constant')
                         samples = np.concatenate((samples[None, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
                         i += 1
                     else:
                         roismall = resize(roi, (28, 28), mode='constant')
-                        #roismall = resize(roi, (22, 30), mode='constant')
                         samples = np.concatenate((samples[:, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
+
+        #for i in range(samples.shape[0]):
+         #   samples[i] = 1-samples[i]
 
         self.candidates = {
             'fullscale': samples,
@@ -74,11 +77,11 @@ class ImageProcess():
             'coordinates': np.array(coordinates)
         }
 
-        print('Images After Contour Detection')
-        print('Fullscale: ', self.candidates['fullscale'].shape)
-        print('Flattened: ', self.candidates['flattened'].shape)
-        print('Contour Coordinates: ', self.candidates['coordinates'].shape)
-        print('============================================================')
+        #print('Images After Contour Detection')
+        #print('Fullscale: ', self.candidates['fullscale'].shape)
+        #print('Flattened: ', self.candidates['flattened'].shape)
+        #print('Contour Coordinates: ', self.candidates['coordinates'].shape)
+        #print('============================================================')
 
         return self.candidates
 
@@ -131,7 +134,8 @@ class ImageProcess():
                 ax = fig.add_subplot(10, 10, i + 1, xticks=[], yticks=[])
                 ax.imshow(what_to_plot['fullscale'][i], cmap="Greys_r")
                 if 'predicted_char' in what_to_plot:
-                    ax.text(-6, 8, str(what_to_plot['predicted_char'][i]), fontsize=22, color='red')
+                    ax.text(-6, 8, "{}: {:.2}".format(str(what_to_plot['predicted_char'][i]),
+                            float(max(what_to_plot['predicted_prob'][i].tolist()))), fontsize=22, color='red')
             plt.suptitle(title, fontsize=20)
             plt.show()
         else:
@@ -140,7 +144,8 @@ class ImageProcess():
                 ax = fig.add_subplot(10, 10, i + 1, xticks=[], yticks=[])
                 ax.imshow(what_to_plot['fullscale'][j], cmap="Greys_r")
                 if 'predicted_char' in what_to_plot:
-                    ax.text(-6, 8, str(what_to_plot['predicted_char'][j]), fontsize=22, color='red')
+                    ax.text(-6, 8, "{}: {:.2}".format(str(what_to_plot['predicted_char'][i]),
+                            float(max(what_to_plot['predicted_prob'][i].tolist()))), fontsize=22, color='red')
             plt.suptitle(title, fontsize=20)
             plt.show()
 
@@ -149,12 +154,13 @@ class ImageProcess():
         it takes as argument a pickle model_mnist and predicts whether the detected objects
         contain text or not.
         """
-        predicted = cnn.char_prediction(self.candidates['flattened'])
+        predicted_argmax, predicted_softmax = cnn.char_prediction(self.candidates['flattened'])
         self.which_text = {
                                  'fullscale': self.candidates['fullscale'],
                                  'flattened': self.candidates['flattened'],
                                  'coordinates': self.candidates['coordinates'],
-                                 'predicted_char': predicted
+                                 'predicted_char': predicted_argmax,
+                                 'predicted_prob': predicted_softmax
                                  }
         return self.which_text
 
@@ -173,19 +179,29 @@ class ImageProcess():
         ymax = max(coordinates[:, 0])
         xmax = max(coordinates[:, 3])
 
-        predicted = self.which_text['predicted_char']
+        predicted_char = self.which_text['predicted_char']
+        predicted_prob = self.which_text['predicted_prob']
+        predicted_prob = [max(list(predicted_prob)) for predicted_prob in predicted_prob]
         coordinates = [list(coordinate) for coordinate in coordinates]
 
         #solves python3 zip() problem
-        realign_tmp = list(zip(coordinates, predicted))
+        realign_tmp = list(zip(coordinates, predicted_char, predicted_prob))
         to_realign_tmp = realign_tmp[:]
         to_realign = list(to_realign_tmp)
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for char in to_realign:
-            if (char[1] != 11):
-                ax.text(char[0][1], char[0][2], char[1], size=16)
+            if (char[2] <0.80):
+                pass
+                #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+            elif(char[2] <0.90):
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
+            elif (char[2] < 0.95):
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='blue')
+            else:
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='green')
+
         ax.set_ylim(-10, ymax + 10)
         ax.set_xlim(-10, xmax + 10)
 

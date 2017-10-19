@@ -58,8 +58,8 @@ sess = tf.Session()
 
 sess.run(tf.global_variables_initializer())
 
-for i in range(1000):
-    batch = mnist.train.next_batch(100)
+for i in range(20000):
+    batch = mnist.train.next_batch(50)
     if i%100 == 0:
         train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob:1.0})
         print("step %d, training accuracy %g" %(i,train_accuracy))
@@ -68,3 +68,14 @@ print("test accuracy %g"% sess.run(accuracy, feed_dict={x: mnist.test.images,y_:
 
 
 saver.save(sess, 'model_mnist/model_mnist.ckpt')
+
+"""
+Possible improvements:
+There are several steps you can take to improve on this model. 
+One step is to apply affine transformations to the images, 
+creating additional images similar but slightly different than the originals. 
+This helps account for handwriting with various "tilts" and other tendencies. 
+You can also train several of the same network, 
+and have them make the final prediction together, 
+averaging the predictions or choosing the prediction with the highest confidence.
+"""

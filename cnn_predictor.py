@@ -1,6 +1,4 @@
 import tensorflow as tf
-import numpy as np
-from PIL import Image,ImageFilter
 
 def char_prediction(candidates):
     x = tf.placeholder("float", shape=[None,784])
@@ -62,7 +60,8 @@ def char_prediction(candidates):
         saver.restore(sess, "model_mnist/model_mnist.ckpt")
         result = tf.argmax(y_conv, 1)
 
-        return result.eval(feed_dict={x: candidates, keep_prob: 1.0}, session=sess)
+        return result.eval(feed_dict={x: candidates, keep_prob: 1.0}, session=sess), \
+               y_conv.eval(feed_dict={x: candidates, keep_prob: 1.0}, session=sess)
 
 
 
