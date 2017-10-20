@@ -1,10 +1,12 @@
-import custom_set_generator as dataset
-mnist = dataset.read_data_sets('./custom_data/', one_hot=True)
+import tf_records_reader as chars74k
+
 
 import tensorflow as tf
-x = tf.placeholder("float", shape=[None,784])
-y_ = tf.placeholder("float", shape=[None,11])
-x_image= tf.reshape(x,[-1,28,28,1])
+#x = tf.placeholder("float", shape=[None,784])
+#y_ = tf.placeholder("float", shape=[None,62])
+x = tf.Variable(tf.zeros([100,784]), name='x')
+y_ = tf.Variable(tf.zeros([100,62]), name='y_')
+x_image = tf.reshape(x,[-1,28,28,1])
 
 def weight_variable(shape):
     initial = tf.truncated_normal(shape,stddev=0.1)
@@ -44,8 +46,8 @@ h_fc1 = tf.nn.relu(tf.matmul(h_pool2_flat,W_fc1) + b_fc1)
 keep_prob = tf.placeholder("float")
 h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
-W_fc2 = weight_variable([1024,11])
-b_fc2 = bias_variable([11])
+W_fc2 = weight_variable([1024,62])
+b_fc2 = bias_variable([62])
 
 y_conv = tf.nn.softmax(tf.matmul(h_fc1_drop,W_fc2) + b_fc2)
 cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
@@ -58,13 +60,14 @@ sess = tf.Session()
 
 sess.run(tf.global_variables_initializer())
 
-for i in range(1000):
-    batch = mnist.train.next_batch(100)
+for i in range(20000):
+    x, y_ = chars74k.inputs(train_dir='chars74k_data\\', train=True, batch_size=100, num_epochs=2)
     if i%100 == 0:
-        train_accuracy = sess.run(accuracy, feed_dict={x:batch[0], y_: batch[1], keep_prob:1.0})
+        train_accuracy = sess.run(accuracy, feed_dict={keep_prob:1.0})
         print("step %d, training accuracy %g" %(i,train_accuracy))
-    sess.run(train_step, feed_dict={x: batch[0], y_: batch[1], keep_prob:0.5})
-print("test accuracy %g"% sess.run(accuracy, feed_dict={x: mnist.test.images,y_: mnist.test.labels, keep_prob: 1.0}))
+    sess.run(train_step, feed_dict={ keep_prob:0.5})
+x, y_ = chars74k.inputs(train_dir='chars74k_data\\', train=False, batch_size=500, num_epochs=2)
+print("test accuracy %g"% sess.run(accuracy, feed_dict={keep_prob: 1.0}))
 
 
-saver.save(sess, 'model_mnist/model_mnist.ckpt')
+saver.save(sess, 'model_chars74k/model_chars74k.ckpt')

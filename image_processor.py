@@ -60,37 +60,25 @@ class ImageProcess():
                         samples = resize(roi, (20, 14), mode='constant')
                         #padding extra pixel to zero in order to fit it in 28x28 convolution layer
                         samples = np.pad(samples, ((4, 4), (7, 7)),  mode='constant')
-                        #samples = resize(samples, (28, 28), mode='constant')
                         coordinates.append(region.bbox)
                         i += 1
                     elif i == 1:
                         roismall = resize(roi, (20, 14), mode='constant')
                         roismall = np.pad(roismall, ((4, 4), (7, 7)), mode='constant')
-                        #roismall = resize(roismall, (28, 28), mode='constant')
                         samples = np.concatenate((samples[None, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
                         i += 1
                     else:
                         roismall = resize(roi, (20, 14), mode='constant')
                         roismall = np.pad(roismall, ((4, 4), (7, 7)), mode='constant')
-                        #roismall = resize(roismall, (28, 28), mode='constant')
                         samples = np.concatenate((samples[:, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
-
-        #for i in range(samples.shape[0]):
-         #   samples[i] = 1-samples[i]
 
         self.candidates = {
             'fullscale': samples,
             'flattened': samples.reshape((samples.shape[0], -1)),
             'coordinates': np.array(coordinates)
         }
-
-        #print('Images After Contour Detection')
-        #print('Fullscale: ', self.candidates['fullscale'].shape)
-        #print('Flattened: ', self.candidates['flattened'].shape)
-        #print('Contour Coordinates: ', self.candidates['coordinates'].shape)
-        #print('============================================================')
 
         return self.candidates
 
@@ -202,18 +190,24 @@ class ImageProcess():
         to_realign_tmp = realign_tmp[:]
         to_realign = list(to_realign_tmp)
 
-        fig = plt.figure()
+        fig = plt.figure(figsize=(12,12))
         ax = fig.add_subplot(111)
         for char in to_realign:
             if(char[2] <0.5):
                 pass
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif (char[2] <0.70):
                 if(char[1] == 1):
+                    #pass
+                    ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
+                else:
                     ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif(char[2] <0.90):
                 if(char[1] == 1 or char[1] == 6):
+                    #pass
                     ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
             elif (char[2] < 0.95):
+                #pass
                 ax.text(char[0][1], char[0][2], char[1], size=16, color='blue')
             else:
                 ax.text(char[0][1], char[0][2], char[1], size=16, color='green')
