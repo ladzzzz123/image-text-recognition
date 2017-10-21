@@ -48,6 +48,7 @@ NUM_EPOCHS = 2
 BATCH_SIZE = 100
 
 # Constants used for dealing with the files, matches convert_to_records.
+
 TRAIN_FILE = 'chars74k_English_Fnt_train.tfrecords'
 VALIDATION_FILE = 'chars74k_English_Fnt_validation.tfrecords'
 
