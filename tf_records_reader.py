@@ -48,8 +48,13 @@ NUM_EPOCHS = 2
 BATCH_SIZE = 100
 
 # Constants used for dealing with the files, matches convert_to_records.
+<<<<<<< HEAD
+TRAIN_FILE = 'chars74k_English_Fnt_train.tfrecords'
+VALIDATION_FILE = 'chars74k_English_Fnt_validation.tfrecords'
+=======
 TRAIN_FILE = 'train.tfrecords'
 VALIDATION_FILE = 'validation.tfrecords'
+>>>>>>> 4faa66e05ac67db986582d19d1566a52ee209beb
 
 
 def read_and_decode(filename_queue):
