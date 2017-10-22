@@ -61,7 +61,7 @@ def read_and_decode(filename_queue):
       # Defaults are not specified since both keys are required.
       features={
           'image/encoded':  tf.FixedLenFeature((), tf.string, default_value=''),
-          'image/format': tf.FixedLenFeature((), tf.string, default_value='png'),
+          #'image/format': tf.FixedLenFeature((), tf.string, default_value='png'),
           'image/class/label': tf.FixedLenFeature(
           [], tf.int64, default_value=tf.zeros([], dtype=tf.int64)),
       })

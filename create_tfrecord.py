@@ -12,7 +12,7 @@ flags.DEFINE_string('dataset_dir', 'chars74k_data/English', 'String: Your datase
 flags.DEFINE_float('validation_size', 0.3, 'Float: The proportion of examples in the dataset to be used for validation')
 
 # The number of shards to split the dataset into
-flags.DEFINE_integer('num_shards', 1, 'Int: Number of shards to split the TFRecord files')
+flags.DEFINE_integer('num_shards', 3, 'Int: Number of shards to split the TFRecord files')
 
 # Seed for repeatability.
 flags.DEFINE_integer('random_seed', 0,'Int: Random seed to use for repeatability.')
