@@ -38,10 +38,10 @@ def bytes_feature(values):
 def image_to_tfexample(image_data, image_format, height, width, class_id):
   return tf.train.Example(features=tf.train.Features(feature={
       'image/encoded': bytes_feature(image_data),
-      'image/format': bytes_feature(image_format),
+      #'image/format': bytes_feature(image_format),
       'image/class/label': int64_feature(class_id),
-      'image/height': int64_feature(height),
-      'image/width': int64_feature(width),
+      #'image/height': int64_feature(height),
+      #'image/width': int64_feature(width),
   }))
 
 def write_label_file(labels_to_class_names, dataset_dir,
@@ -158,7 +158,7 @@ def _get_filenames_and_classes(dataset_dir):
 def _get_dataset_filename(dataset_dir, split_name, shard_id, tfrecord_filename, _NUM_SHARDS):
   #output_filename = '%s_%s_%05d-of-%05d.tfrecord' % (
   #    tfrecord_filename, split_name, shard_id, _NUM_SHARDS)
-  output_filename = ('%s_%s.tfrecord' % (tfrecord_filename,split_name))
+  output_filename = ('%s_%s.tfrecords' % (tfrecord_filename, split_name))
   return os.path.join(dataset_dir, output_filename)
 
 
@@ -201,7 +201,7 @@ def _convert_dataset(split_name, filenames, class_names_to_ids, dataset_dir, tfr
             class_id = class_names_to_ids[class_name]
 
             example = image_to_tfexample(
-                image_data,b'png', height, width, class_id)
+                image_data, b'png', height, width, class_id)
             tfrecord_writer.write(example.SerializeToString())
 
   sys.stdout.write('\n')

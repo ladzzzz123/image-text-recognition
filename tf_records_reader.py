@@ -49,8 +49,8 @@ BATCH_SIZE = 100
 
 # Constants used for dealing with the files, matches convert_to_records.
 
-TRAIN_FILE = 'chars74k_English_Fnt_train.tfrecords'
-VALIDATION_FILE = 'chars74k_English_Fnt_validation.tfrecords'
+TRAIN_FILE = 'chars74k_fnt_train.tfrecords'
+VALIDATION_FILE = 'chars74k_fnt_validation.tfrecords'
 
 
 def read_and_decode(filename_queue):
@@ -126,8 +126,8 @@ def inputs(train_dir, train, batch_size, num_epochs):
         capacity=1000 + 3 * batch_size,
         # Ensures a minimum amount of shuffling of examples.
         min_after_dequeue=1000)
-
-    return images, tf.one_hot(sparse_labels,62)
+    #change dimension according to number of labels.
+    return images, tf.one_hot(sparse_labels,10)
 
 
 
