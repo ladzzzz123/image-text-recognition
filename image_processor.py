@@ -55,23 +55,47 @@ class ImageProcess():
                 if roi.shape[0] * roi.shape[1] == 0:
                     continue
                 else:
+                    width = maxc - minc;
+                    height = maxr - minr;
+                    if width > height:
+                        new_width = 22
+                        new_height = round(22 * height / width)
+                        if new_height == 0:
+                            new_height = 2
+                        if new_height % 2 != 0:
+                            new_height += 1
+
+                    elif width < height:
+                        new_width = round(22 * width / height)
+                        new_height = 22
+                        if new_width == 0:
+                            new_width = 2
+                        if new_width % 2 != 0:
+                            new_width += 1
+                    else:
+                        new_width = 22
+                        new_height = 22
+
                     if i == 0:
-                        #resizing individual image into 14 x 20 pixel image
+                        #resizing individual image into 12 x 20 pixel image
                         #This is because usual font images have longer height than width
-                        samples = resize(roi, (20, 14), mode='constant')
+                        samples = resize(roi, (new_height,new_width), mode='constant')
                         #padding extra pixel to zero in order to fit it in 28x28 convolution layer
-                        samples = np.pad(samples, ((4, 4), (7, 7)),  mode='constant')
+                        samples = np.pad(samples, ((int((28-new_height)/2), int((28-new_height)/2)),
+                                                   (int((28-new_width)/2), int((28-new_width)/2))), mode='constant')
                         coordinates.append(region.bbox)
                         i += 1
                     elif i == 1:
-                        roismall = resize(roi, (20, 14), mode='constant')
-                        roismall = np.pad(roismall, ((4, 4), (7, 7)), mode='constant')
+                        roismall = resize(roi, (new_height, new_width), mode='constant')
+                        roismall = np.pad(roismall, ((int((28-new_height)/2), int((28-new_height)/2)),
+                                                     (int((28-new_width)/2), int((28-new_width)/2))), mode='constant')
                         samples = np.concatenate((samples[None, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
                         i += 1
                     else:
-                        roismall = resize(roi, (20, 14), mode='constant')
-                        roismall = np.pad(roismall, ((4, 4), (7, 7)), mode='constant')
+                        roismall = resize(roi, (new_height, new_width), mode='constant')
+                        roismall = np.pad(roismall, ((int((28-new_height)/2), int((28-new_height)/2)),
+                                                     (int((28-new_width)/2), int((28-new_width)/2))), mode='constant')
                         samples = np.concatenate((samples[:, :, :], roismall[None, :, :]), axis=0)
                         coordinates.append(region.bbox)
 
@@ -250,18 +274,10 @@ class ImageProcess():
                 pass
                 #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif (char[2] <0.70):
-                if(char[1] == 1):
-                    #pass
-                    ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
-                else:
-                    pass
-                    #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif(char[2] <0.90):
-                if(char[1] == 1 or char[1] == 6):
-                    #pass
-                    ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
             elif (char[2] < 0.95):
-                #pass
                 ax.text(char[0][1], char[0][2], char[1], size=16, color='blue')
             else:
                 ax.text(char[0][1], char[0][2], char[1], size=16, color='green')
