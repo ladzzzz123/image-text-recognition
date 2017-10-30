@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def char_prediction(candidates):
+def char_prediction(candidates, model_num):
     x = tf.placeholder("float", shape=[None,784])
     y_ = tf.placeholder("float", shape=[None,10])
     x_image = tf.reshape(x,[-1,28,28,1])
@@ -57,7 +57,7 @@ def char_prediction(candidates):
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        saver.restore(sess, "model_mnist/model_mnist.ckpt")
+        saver.restore(sess, "model_mnist/model_"+str(model_num)+"/model/model_mnist.ckpt")
         result = tf.argmax(y_conv, 1)
 
         return result.eval(feed_dict={x: candidates, keep_prob: 1.0}, session=sess), \

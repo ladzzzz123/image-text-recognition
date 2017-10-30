@@ -14,6 +14,7 @@ from skimage.color import label2rgb
 import matplotlib.patches as mpatches
 
 import cnn_predictor as cnn
+import tensorflow as tf
 #import cnn_custom_predictor as cnn
 #import cnn_predictor_modified as cnn
 
@@ -155,7 +156,59 @@ class ImageProcess():
         it takes as argument a pickle model_mnist and predicts whether the detected objects
         contain text or not.
         """
-        predicted_argmax, predicted_softmax = cnn.char_prediction(self.candidates['flattened'])
+        argmax = []
+        softmax = []
+        prob = []
+        g1 = tf.Graph()
+        g2 = tf.Graph()
+        g3 = tf.Graph()
+        g4 = tf.Graph()
+        g5 = tf.Graph()
+
+        with g1.as_default():
+            argmax_tmp, softmax_tmp = cnn.char_prediction(self.candidates['flattened'], 1)
+            prob_tmp = [max(list(softmax_tmp)) for softmax_tmp in softmax_tmp]
+            argmax.append(argmax_tmp)
+            softmax.append(softmax_tmp)
+            prob.append(prob_tmp)
+
+        with g2.as_default():
+            argmax_tmp, softmax_tmp = cnn.char_prediction(self.candidates['flattened'], 2)
+            prob_tmp = [max(list(softmax_tmp)) for softmax_tmp in softmax_tmp]
+            argmax.append(argmax_tmp)
+            softmax.append(softmax_tmp)
+            prob.append(prob_tmp)
+
+        with g3.as_default():
+            argmax_tmp, softmax_tmp = cnn.char_prediction(self.candidates['flattened'], 3)
+            prob_tmp = [max(list(softmax_tmp)) for softmax_tmp in softmax_tmp]
+            argmax.append(argmax_tmp)
+            softmax.append(softmax_tmp)
+            prob.append(prob_tmp)
+
+        with g4.as_default():
+            argmax_tmp, softmax_tmp= cnn.char_prediction(self.candidates['flattened'], 4)
+            prob_tmp = [max(list(softmax_tmp)) for softmax_tmp in softmax_tmp]
+            argmax.append(argmax_tmp)
+            softmax.append(softmax_tmp)
+            prob.append(prob_tmp)
+
+        with g5.as_default():
+            argmax_tmp, softmax_tmp = cnn.char_prediction(self.candidates['flattened'], 5)
+            prob_tmp = [max(list(softmax_tmp)) for softmax_tmp in softmax_tmp]
+            argmax.append(argmax_tmp)
+            softmax.append(softmax_tmp)
+            prob.append(prob_tmp)
+
+        predicted_argmax = argmax[0]
+        predicted_softmax = softmax[0]
+        predicted_prob = prob[0]
+        for i in range(1, 5):
+            if predicted_prob < prob[i]:
+                predicted_argmax = argmax[i]
+                predicted_softmax = softmax[i]
+                predicted_prob = prob[i]
+
         self.which_text = {
                                  'fullscale': self.candidates['fullscale'],
                                  'flattened': self.candidates['flattened'],
@@ -195,13 +248,14 @@ class ImageProcess():
         for char in to_realign:
             if(char[2] <0.5):
                 pass
-                ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+                #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif (char[2] <0.70):
                 if(char[1] == 1):
                     #pass
-                    ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
-                else:
                     ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+                else:
+                    pass
+                    #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
             elif(char[2] <0.90):
                 if(char[1] == 1 or char[1] == 6):
                     #pass
