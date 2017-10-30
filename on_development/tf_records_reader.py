@@ -59,27 +59,26 @@ def read_and_decode(filename_queue):
   features=tf.parse_single_example(
           serialized_example,
           features={
-          'image/encoded':  tf.FixedLenFeature((), tf.string, default_value=''),
-          'image/format': tf.FixedLenFeature((), tf.string, default_value='png'),
+          'image/encoded':  tf.FixedLenFeature([], tf.string, default_value=''),
+          #'image/format': tf.FixedLenFeature((), tf.string, default_value='png'),
           'image/class/label': tf.FixedLenFeature(
           [], tf.int64, default_value=tf.zeros([], dtype=tf.int64)),
-          'image/height': tf.FixedLenFeature([],tf.int64),
-          'image/width': tf.FixedLenFeature([],tf.int64),
+          #'image/height': tf.FixedLenFeature([],tf.int64),
+          #'image/width': tf.FixedLenFeature([],tf.int64),
       })
 
 
   # Convert from a scalar string tensor (whose single string has
   # length mnist.IMAGE_PIXELS) to a uint8 tensor with shape
   # [mnist.IMAGE_PIXELS].
-  height = tf.cast(features['image/height'], tf.int32)
-  width = tf.cast(features['image/width'], tf.int32)
+  #height = tf.cast(features['image/height'], tf.int32)
+  #width = tf.cast(features['image/width'], tf.int32)
   image = tf.decode_raw(features['image/encoded'], tf.uint8)
   #image_shape=tf.stack([height,width,3])
   #image = tf.reshape(image,image_shape)
   #image.set_shape([HEIGHT, WIDTH, 3])
+
   image.set_shape([mnist.IMAGE_PIXELS])
-
-
 
   # OPTIONAL: Could reshape into a 28x28 image and apply distortions
   # here.  Since we are not applying any distortions in this
@@ -92,7 +91,6 @@ def read_and_decode(filename_queue):
 
   # Convert label from a scalar uint8 tensor to an int32 scalar.
   label = tf.cast(features['image/class/label'], tf.int32)
-
   return image, label
 
 
@@ -132,8 +130,9 @@ def inputs(train_dir, train, batch_size, num_epochs):
         capacity=1000 + 3 * batch_size,
         # Ensures a minimum amount of shuffling of examples.
         min_after_dequeue=1000)
+#    images, sparse_labels = tf.train.batch([image, label], batch_size=batch_size,num_threads=2, capacity=1000 + 3 *batch_size,allow_smaller_final_batch=True )
     #change dimension according to number of labels.
-    return images, tf.one_hot(sparse_labels,10)
-
+    #return images, tf.one_hot(sparse_labels,10)
+    return images, sparse_labels
 
 

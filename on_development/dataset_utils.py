@@ -40,8 +40,8 @@ def image_to_tfexample(image_data, image_format, height, width, class_id):
       'image/encoded': bytes_feature(image_data),
       #'image/format': bytes_feature(image_format),
       'image/class/label': int64_feature(class_id),
-      'image/height': int64_feature(height),
-      'image/width': int64_feature(width),
+      #'image/height': int64_feature(height),
+      #'image/width': int64_feature(width),
   }))
 
 def write_label_file(labels_to_class_names, dataset_dir,
@@ -104,7 +104,7 @@ class ImageReader(object):
   def __init__(self):
     # Initializes function that decodes RGB JPEG data.
     self._decode_png_data = tf.placeholder(dtype=tf.string)
-    self._decode_png = tf.image.decode_png(self._decode_png_data, channels=0)
+    self._decode_png = tf.image.decode_png(self._decode_png_data, channels=1)
     #channel: 1-> gray, 3->rgb, 0->asis
 
   def read_image_dims(self, sess, image_data):

@@ -2,10 +2,10 @@ import tf_records_reader as chars74k
 import time
 
 import tensorflow as tf
-#x = tf.placeholder("float", shape=[None,784])
-#y_ = tf.placeholder("float", shape=[None,62])
-x = tf.Variable(tf.zeros([100,784]), name='x')
-y_ = tf.Variable(tf.zeros([100,10]), name='y_')
+x = tf.placeholder("float", shape=[None,784])
+y_ = tf.placeholder("float", shape=[None,10])
+#x = tf.Variable(tf.zeros([100,784]), name='x')
+#y_ = tf.Variable(tf.zeros([100,10]), name='y_')
 x_image = tf.reshape(x,[-1,28,28,1])
 
 def weight_variable(shape):
@@ -54,46 +54,28 @@ cross_entropy = -tf.reduce_sum(y_*tf.log(y_conv))
 train_step = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
 correct_prediction = tf.equal(tf.argmax(y_conv,1), tf.argmax(y_,1))
 accuracy = tf.reduce_mean(tf.cast(correct_prediction,"float"))
+with tf.Session() as sess:
+    saver = tf.train.Saver()
+    t_images_batch, t_labels_batch = chars74k.inputs(train_dir='chars74k_data/', train=True, batch_size=100, num_epochs=2)
+    v_images_batch, v_labels_batch = chars74k.inputs(train_dir='chars74k_data/', train=False, batch_size=100, num_epochs=2)
+    init_op = tf.group(tf.global_variables_initializer(),tf.local_variables_initializer())
+    sess.run(init_op)
 
-saver = tf.train.Saver()
-sess = tf.Session()
-x, y_ = chars74k.inputs(train_dir='chars74k_data/', train=True, batch_size=100, num_epochs=10000)
-init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-sess.run(init_op)
-#saver.restore(sess, "model_chars74k/model_mnist.ckpt")
+    coord = tf.train.Coordinator()
+    threads = tf.train.start_queue_runners(coord=coord)
 
-coord = tf.train.Coordinator()
-threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+    for i in range(20000):
+        images, labels = sess.run([t_images_batch,t_labels_batch])
+        if i%100 == 0:
+            train_accuracy = sess.run(accuracy, feed_dict={x:images, y_: labels, keep_prob:1.0})
+            print("step %d, training accuracy %g" %(i,train_accuracy))
+        sess.run(train_step, feed_dict={x: images, y_: labels, keep_prob:0.5})
 
-try:
-    step = 0
-    while not coord.should_stop():
-        # Run one step of the model.  The return values are
-        # the activations from the `train_op` (which is
-        # discarded) and the `loss` op.  To inspect the values
-        # of your ops or variables, you may include them in
-        # the list passed to sess.run() and the value tensors
-        # will be returned in the tuple from the call.
+    images, labels = sess.run([v_images_batch, v_labels_batch])
+    print("test accuracy %g"% sess.run(accuracy, feed_dict={x: images, y_: labels, keep_prob: 1.0}))
 
-        start_time = time.time()
-        sess.run(train_step, feed_dict={keep_prob: 0.5})
-        duration = time.time() - start_time
-        if step%100 == 0:
-            train_accuracy = sess.run(accuracy, feed_dict={keep_prob: 1.0})
-            print("step %d, training accuracy %g" %(step,train_accuracy))
-        step += 1
-except tf.errors.OutOfRangeError:
-    print('Done training for %d epochs, %d steps.' % (10000, step))
 
-finally:
-    # When done, ask the threads to stop.
+    saver.save(sess, 'model_mnist/model_mnist.ckpt')
     coord.request_stop()
+    coord.join(threads)
 
-# Wait for threads to finish.
-coord.join(threads)
-sess.close()
-
-x, y_ = chars74k.inputs(train_dir='chars74k_data/', train=False, batch_size=3000, num_epochs=1)
-print("test accuracy %g"% sess.run(accuracy, feed_dict={keep_prob: 1.0}))
-
-saver.save(sess, 'model_chars74k/model_mnist.ckpt')
