@@ -10,10 +10,10 @@ class disjointSet:
         return
 
     def find(self, x):
-        if self.elements[x][0][:39] == x:
+        if self.elements[x][0][:37] == x:
             return x
         self.elements[x][0] = self.find(self.elements[x][0])
-        return self.elements[x][0][:39]
+        return self.elements[x][0][:37]
 
     def union(self, x, y):
         xRoot = self.find(x)
@@ -31,7 +31,7 @@ class disjointSet:
     def print(self,dest):
         fp = open(dest,'w')
         for k, l in sorted(self.elements.items()):
-            if l[0][:39] != k:
+            if l[0][:37] != k:
                 new_k = self.find(k)
                 self.elements[new_k][0] += '; ' + k
                 del self.elements[k]
@@ -45,7 +45,7 @@ coord_pair = disjointSet()
 
 def union_and_find(dest, raw_result):
 
-    DIFF_PIXEL = 10
+    DIFF_PIXEL = 20
     sorted_coord = sorted(raw_result, key=lambda raw_coord: raw_coord[0][1])
 
 
@@ -66,7 +66,7 @@ def union_and_find(dest, raw_result):
 
             is_width = abs(width_i - width_j) < DIFF_PIXEL
             is_height = abs(height_i - height_j) < DIFF_PIXEL
-            is_x = abs(minx_i - maxx_j) < width_i
+            is_x = abs(minx_i - maxx_j) < DIFF_PIXEL
             is_maxy = abs(maxy_i - maxy_j) < DIFF_PIXEL
             is_miny = abs(miny_i - miny_j) < DIFF_PIXEL
             is_pair = is_width and is_height and is_x and is_maxy and is_miny
@@ -74,7 +74,7 @@ def union_and_find(dest, raw_result):
             if is_pair:
                 coord_list_i = list(sorted_coord[i])
                 coord_list_j = list(sorted_coord[j])
-                coord_i = "{}, {:.3f}, ({:6d},{:6d},{:6d},{:6d})".format(int(np.asscalar(coord_list_i[1])), #char
+                coord_i = "{}, {:.3f}, {:6d},{:6d},{:6d},{:6d}".format(int(np.asscalar(coord_list_i[1])), #char
                                                               float(np.asscalar(coord_list_i[2])), #prob
                                                               int(np.asscalar(coord_list_i[0][1])),#minx
                                                               int(np.asscalar(coord_list_i[0][2])),#miny
@@ -82,7 +82,7 @@ def union_and_find(dest, raw_result):
                                                               int(np.asscalar(coord_list_i[0][0]))#maxy
                                                               )
 
-                coord_j = "{}, {:.3f}, ({:6d},{:6d},{:6d},{:6d})".format(int(np.asscalar(coord_list_j[1])), #char
+                coord_j = "{}, {:.3f}, {:6d},{:6d},{:6d},{:6d}".format(int(np.asscalar(coord_list_j[1])), #char
                                                               float(np.asscalar(coord_list_j[2])), #prob
                                                               int(np.asscalar(coord_list_j[0][1])),#minx
                                                               int(np.asscalar(coord_list_j[0][2])),#miny
