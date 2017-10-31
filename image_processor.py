@@ -286,3 +286,4 @@ class ImageProcess():
         ax.set_xlim(-10, xmax + 10)
 
         plt.show()
+        return to_realign
