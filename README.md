@@ -16,6 +16,8 @@ How-to:
 4. To run the code in Jupyter Notebook, use main.ipynb instead of main.py.
 5. You can find our raw value and coordinates of labels in patent image from "labels/image_name_label.txt"
 
+Corresponding Paper: on process
+
 References:
 
 https://github.com/FraPochetti/ImageTextRecognition
