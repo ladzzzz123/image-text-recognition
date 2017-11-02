@@ -2,7 +2,7 @@
 
 Region-based Convolutional Neural Networks for Text Label Detection in Patent Images
 
-Written by : Taehoon Kim, Sogang University, jamesk1228@gmail.com
+Written by : Taehoon Kim, jamesk1228@gmail.com, Sogang University, Seoul, Republic of Korea
 
 Objective: Detect digits from black & white patent images.
 
