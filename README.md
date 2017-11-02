@@ -13,8 +13,9 @@ How-to:
 2. For pre-trained MNIST Handwritten digit Convolutional Neural Network model, 
    go to https://drive.google.com/open?id=0B7TzarHysU5fNXlwMF9Cb0RTV1U
 3. Unzip pre-trained model and place it under root git repository.
-4. To run the code in Jupyter Notebook, use main.ipynb instead of main.py.
-5. You can find our raw value and coordinates of labels in patent image from "labels/image_name_label.txt"
+4. Place your custom image in "images/"
+5. To run the code in Jupyter Notebook, use main.ipynb instead of main.py.
+6. You can find our raw value and coordinates of labels in patent image from "labels/image_name_label.txt"
 
 Corresponding Paper: on process
 
