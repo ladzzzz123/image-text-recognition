@@ -267,23 +267,23 @@ class ImageProcess():
         to_realign_tmp = realign_tmp[:]
         to_realign = list(to_realign_tmp)
 
-        #fig = plt.figure(figsize=(12,12))
-        #ax = fig.add_subplot(111)
-        #for char in to_realign:
-        #    if(char[2] <0.5):
-        #        pass
-                #ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
-        #    elif (char[2] <0.70):
-        #        ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
-        #    elif(char[2] <0.90):
-        #        ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
-        #    elif (char[2] < 0.95):
-        #        ax.text(char[0][1], char[0][2], char[1], size=16, color='blue')
-        #    else:
-        #        ax.text(char[0][1], char[0][2], char[1], size=16, color='green')
+        fig = plt.figure(figsize=(12,12))
+        ax = fig.add_subplot(111)
+        for char in to_realign:
+            if(char[2] <0.5):
+                pass
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+            elif (char[2] <0.70):
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='black')
+            elif(char[2] <0.90):
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='red')
+            elif (char[2] < 0.95):
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='blue')
+            else:
+                ax.text(char[0][1], char[0][2], char[1], size=16, color='green')
 
-        #ax.set_ylim(-10, ymax + 10)
-        #ax.set_xlim(-10, xmax + 10)
+        ax.set_ylim(-10, ymax + 10)
+        ax.set_xlim(-10, xmax + 10)
 
-        #plt.show(block=False)
+        plt.show(block=False)
         return to_realign

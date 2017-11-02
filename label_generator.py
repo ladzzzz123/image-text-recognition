@@ -52,10 +52,10 @@ def plot_labels(source, image_file):
             continue
         elif label[2] < 0.9:
             pass
-            rect = mpatches.Rectangle((label[3]+10, label[4]+10), label[5] - label[3]+10, label[6] - label[4]+10,
-                              fill=False, edgecolor='red', linewidth=2)
-            ax.add_patch(rect)
-            ax.text(label[5]+10, label[6]+10, label[0], size=16, color='red')
+            #rect = mpatches.Rectangle((label[3]+10, label[4]+10), label[5] - label[3]+10, label[6] - label[4]+10,
+                              #fill=False, edgecolor='red', linewidth=2)
+            #ax.add_patch(rect)
+            #ax.text(label[5]+10, label[6]+10, label[0], size=16, color='red')
 
         elif label[1] > 0.95:
             rect = mpatches.Rectangle((label[3]+10, label[4]+10), label[5] - label[3]+10, label[6] - label[4]+10,
@@ -64,10 +64,10 @@ def plot_labels(source, image_file):
             ax.text(label[5]+10, label[6]+10, label[0], size=16, color='green')
         else:
             pass
-            rect = mpatches.Rectangle((label[4]+10, label[3]+10), label[5] - label[3]+10, label[6] - label[4]+10,
-                              fill=False, edgecolor='red', linewidth=2)
-            ax.add_patch(rect)
-            ax.text(label[5]+10, label[6]+10, label[0], size=16, color='red')
+            #rect = mpatches.Rectangle((label[4]+10, label[3]+10), label[5] - label[3]+10, label[6] - label[4]+10,
+                              #fill=False, edgecolor='red', linewidth=2)
+            #ax.add_patch(rect)
+            #ax.text(label[5]+10, label[6]+10, label[0], size=16, color='red')
 
     ymax = image.shape[0]
     xmax = image.shape[1]
