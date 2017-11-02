@@ -17,6 +17,7 @@ How-to:
 5. You can find our raw value and coordinates of labels in patent image from "labels/image_name_label.txt"
 
 References:
+
 https://github.com/FraPochetti/ImageTextRecognition
 
 Christoph Riedl, Richard Zanibbi, Marti A. Hearst, Siyu Zhu, Michael Menietti, Jason Crusan, Ivan Metelsky, Karim R. Lakhani, Detecting figures and part labels in patents: competition-based development of graphics recognition algorithms International Journal on Document Analysis and Recognition (IJDAR), Volume 19, Issue 2, pp. 155–172, 2016
