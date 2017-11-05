@@ -30,7 +30,7 @@ def char_concatenate(source, dest):
         max_x = sorted_char[len(sorted_char)-1][4]
         max_y = sorted_char[len(sorted_char)-1][5]
 
-        print("{}, {:.3f}, {:.3f}, {}, {}, {}, {}".format(label, min_prob, max_prob, min_x, min_y, max_x, max_y), file=fp_w)
+        print("{}, {:.6f}, {:.6f}, {}, {}, {}, {}".format(label, min_prob, max_prob, min_x, min_y, max_x, max_y), file=fp_w)
 
     fp_r.close()
     fp_w.close()
@@ -48,26 +48,11 @@ def plot_labels(source, image_file):
 
     ax.imshow(np.flipud(image))
     for label in label_list:
-        if label[2] < 0.6:
-            continue
-        elif label[2] < 0.9:
-            pass
-            #rect = mpatches.Rectangle((label[3]+10, label[4]+10), label[5] - label[3]+10, label[6] - label[4]+10,
-                              #fill=False, edgecolor='red', linewidth=2)
-            #ax.add_patch(rect)
-            #ax.text(label[5]+10, label[6]+10, label[0], size=16, color='red')
 
-        elif label[1] > 0.95:
-            rect = mpatches.Rectangle((label[3]+10, label[4]+10), label[5] - label[3]+10, label[6] - label[4]+10,
-                              fill=False, edgecolor='green', linewidth=2)
-            ax.add_patch(rect)
-            ax.text(label[5]+10, label[6]+10, label[0], size=16, color='green')
-        else:
-            pass
-            #rect = mpatches.Rectangle((label[4]+10, label[3]+10), label[5] - label[3]+10, label[6] - label[4]+10,
-                              #fill=False, edgecolor='red', linewidth=2)
-            #ax.add_patch(rect)
-            #ax.text(label[5]+10, label[6]+10, label[0], size=16, color='red')
+        rect = mpatches.Rectangle((label[3], label[4]), abs(label[5] - label[3])+10, abs(label[6] - label[4])+10,
+                                   fill=False, edgecolor='green', linewidth=2)
+        ax.add_patch(rect)
+        ax.text(label[5]+10, label[6]+10, label[0], size=16, color='green')
 
     ymax = image.shape[0]
     xmax = image.shape[1]

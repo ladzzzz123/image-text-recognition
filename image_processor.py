@@ -3,6 +3,7 @@ import cv2
 
 from skimage.io import imread
 from skimage.filters import threshold_otsu
+from skimage.filters import threshold_local
 from skimage.transform import resize
 
 from matplotlib import pyplot as plt
@@ -30,6 +31,8 @@ class ImageProcess():
 
     def preprocess(self):
         image = restoration.denoise_tv_chambolle(self.image, weight=0.1)
+        #block_size = 35
+        #thresh = threshold_local(image, block_size, offset=10)
         thresh = threshold_otsu(image)
         self.bw = closing(image > thresh, square(2))
         self.cleared = self.bw.copy()
