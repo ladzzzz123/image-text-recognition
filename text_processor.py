@@ -1,7 +1,9 @@
 import re
+import chardet
 
 def parser(text):
-    fp_r = open(text, "r")
+    enc = chardet.detect(open(text, "rb").read())['encoding']
+    fp_r = open(text, "r",encoding = enc)
     label_set = set()
 
     for aLine in fp_r:
