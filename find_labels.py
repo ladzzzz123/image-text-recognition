@@ -44,7 +44,7 @@ coord_pair = disjointSet()
 
 def union_and_find(dest, raw_result):
     DIFF_PIXEL = 15
-    DIFF_X = 15
+    DIFF_X = 20
     sorted_coord = sorted(raw_result, key=lambda raw_coord: raw_coord[0][1])
     paired = np.zeros(len(sorted_coord))
 
